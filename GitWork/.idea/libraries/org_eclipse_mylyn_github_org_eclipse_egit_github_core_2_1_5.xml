@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5" type="repository">
+    <properties maven-id="org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/mylyn/github/org.eclipse.egit.github.core/2.1.5/org.eclipse.egit.github.core-2.1.5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
