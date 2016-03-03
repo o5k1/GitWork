@@ -33,10 +33,14 @@ public class GitWork {
 		String teamworkURL = "http://swegroup.teamwork.com";
         String project = "150632";
 
-        String GH_user = "o5k1";
-        String GH_psw = "o5k1wannasex";
-        String GH_target_repo_username = "o5k1";
-        String GH_target_repo_name = "hello-word";
+        //Username GitHub personale
+        String GH_user = "";
+        //Password GitHub personale
+        String GH_psw = "";
+        //Username del gestore del repo target (i.e. mzanella)
+        String GH_target_repo_username = "";
+        //Nome del repo target (i.e. Leaf)
+        String GH_target_repo_name = "";
 			
 		
 		try {
