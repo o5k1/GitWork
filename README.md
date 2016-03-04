@@ -19,4 +19,13 @@ Attenzione: questo applicativo è stato scritto in tempi ristretti, guardare il 
 
 ## Hooks
 ### Git Hooks
-- post-commit.sample è un [Git hook](https://git-scm.com/book/it/v2/Customizing-Git-Git-Hooks) che, dato un messaggio di commit che contenga ```#n_issue``` (dove *n_issue* è il numero di una issue presente nel repository) e ```£toVerify```, cacella la label 'Working' della issue *n_issue* ed aggiunge la label 'toVerify'. 
+post-commit.sample è un [Git hook](https://git-scm.com/book/it/v2/Customizing-Git-Git-Hooks) che, dato un messaggio di commit che contenga ```#n_issue``` (dove *n_issue* è il numero di una issue presente nel repository) e ```£toVerify```, cacella automaticamente la label 'Working' della issue *n_issue* ed aggiunge la label 'toVerify'. 
+
+### Per iniziare
+Aprire il file post-commit.sample e modificare le seguenti variabili: 
+- **usr**;
+- **psw**;
+- **target_repo_owner**; 
+- **target_repo_name** .
+
+Successivamente rimuovere l'estensione .sample ed inserire post-commit nella cartella **.git/hooks** del repository locale che si vuole dotare di tale funzionalità.
