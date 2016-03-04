@@ -1,0 +1,37 @@
+#!/bin/sh
+
+#username GitHub
+usr=""
+#password GitHub
+psw=""
+#nome del proprietario del repo bersaglio dell'hook
+target_repo_owner=""
+#nome del repo bersaglio dell'hook
+target_repo_name=""
+
+#messaggio di commit
+commit_msg=$(git log -1 --pretty=%B)
+echo $commit_msg
+
+#Questo commit vuole cambiare la label di una certa issue?
+if [[ $commit_msg =~ "£toVerify" ]]; then
+	echo $commit_msg
+	#Qual è la issue di cui si vuole cambiare label?
+	if [[ "$commit_msg" =~ ([#][0-9]+) ]]; then
+		result=$(perl -e 'if($ARGV[0] =~ /([#]\d+)/){print $1;}
+			else{print 0;};' -- "$commit_msg")
+		#estrai il solo numero(senza '#') della issue da 'result'
+		if [[ $result != 0 ]]; then
+			issue_number=$(perl -e '$ARGV[0] =~ /(\d+)/; print $1;' -- "$result")
+		fi
+		echo $issue_number
+	else
+		echo "*** QUESTO COMMIT NON SI RIFERISCE AD ALCUNA ISSUE ***"
+	fi
+
+	#HTTP DELETE attraverso la libreria cURL. Elimina label 'Working'
+	curl -u $usr:$psw -X "DELETE" https://api.github.com/repos/$target_repo_owner/$target_repo_name/labels/Working
+	#HTTP GET attraverso la libreria cURL. Aggiunge label 'toVerify'
+	curl -u $usr:$psw --data '["toVerify"]' https://api.github.com/repos/$target_repo_owner/$target_repo_name/issues/$issue_number/labels
+	echo "Issue's label changed in 'toVerify'"
+fi
