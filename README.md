@@ -4,8 +4,11 @@ Nessuna garanzia sull'affidabilità del contenuto di questo repository.
 
 ## GitWork
 Si tratta di un programma JAVA da riga di comando che permette di scegliere un task di Teamwork e trasformare tutti i suoi sub-task in issue di GitHub.
-
-Utilizzate le issue per richieste di funzionalità e segnalazione di errori.
+Dato un task di Teamwork, viene creata una issue sul repository GitHub (hard-coded) avente:
+- titolo: corrisponde al titolo del task da cui deriva;
+- descrizione: corrisponde alla descrizione del task da cui deriva;
+- label *ToDo*;
+- Commento: contiende l'id del task da cui deriva, utile per gli *hook*.
 
 ### Per iniziare
 Aprire il file GitWork.java e modificare le seguenti variabili: 
