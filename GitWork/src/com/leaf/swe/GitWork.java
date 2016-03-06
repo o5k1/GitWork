@@ -2,6 +2,7 @@ package com.leaf.swe;
 
 import com.google.gson.Gson;
 import org.eclipse.egit.github.core.Issue;
+import org.eclipse.egit.github.core.Label;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryIssue;
 import org.eclipse.egit.github.core.client.GitHubClient;
@@ -104,21 +105,25 @@ public class GitWork {
                     issue = new RepositoryIssue();
                     issue.setTitle(entry.getValue().getNome());
                     issue.setBody(entry.getValue().getDescrizione());
-                    is.createIssue(GH_target_repo_username,GH_target_repo_name,issue);
+                    //crea label
+                    Label label = new Label();
+                    label.setName("ToDo");
+                    label.setColor("#fbca04");
+                    label.setUrl("https://github.com/mzanella/Leaf/labels/ToDo");
+                    //assegna label ad issue
+                    List<Label> labels = new ArrayList<>();
+                    labels.add(label);
+                    issue.setLabels(labels);
+
+                    Issue created_issue = is.createIssue(GH_target_repo_username,GH_target_repo_name,issue);
+                    System.out.println("OK");
+                    //crea il primo commento, contenente l'id del subtask da cui la corrente issue deriva
+                    is.createComment(GH_target_repo_username,GH_target_repo_name,created_issue.getNumber(),entry.getKey());
                     System.out.println("<" + entry.getValue().getNome() + "> ---> ISSUE CREATA!");
                 }
             }
 		} catch(Exception e) {
 			System.out.println( "Error Received:" + e.getMessage() + " " + e.getClass() );
 		}
-	}
-
-    public static String streamToString(InputStream in) throws IOException {
-		StringBuilder out = new StringBuilder();
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		for(String line = br.readLine(); line != null; line = br.readLine()) 
-			out.append(line);
-		//br.close();
-		return out.toString();
 	}
 }
