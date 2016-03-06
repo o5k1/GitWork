@@ -18,8 +18,10 @@ Aprire il file GitWork.java e modificare le seguenti variabili:
 - **GH_target_repo_name** .
 
 ## Hooks
-### Git Hooks
-post-commit.sample è un [Git hook](https://git-scm.com/book/it/v2/Customizing-Git-Git-Hooks) che, dato un messaggio di commit che contenga ```#n_issue``` (dove *n_issue* è il numero di una issue presente nel repository) e ```£toVerify```, cacella automaticamente la label 'Working' della issue *n_issue* ed aggiunge la label 'toVerify'. 
+### post-commit
+post-commit.sample è un [Git hook](https://git-scm.com/book/it/v2/Customizing-Git-Git-Hooks) che controlla ogni messaggio *m* di commit ed agisce di conseguenza:
+- se *m* contiene la stringa "£toVerify" e la stringa "#n" (con *n* numero di una issue): elimina la label "Working" ed inserisce la label "ToVerify" alla issue *n*;
+- se *m* contiene la stringa "close" e la stringa "#n": chiude la issue *n* ed segna come completo il relativo task.
 
 ### Per iniziare
 Aprire il file post-commit.sample e modificare le seguenti variabili: 
