@@ -8,30 +8,40 @@ psw=""
 target_repo_owner=""
 #nome del repo bersaglio dell'hook
 target_repo_name=""
+#Teamwork APIKey
+tw_api_key=""
 
 #messaggio di commit
 commit_msg=$(git log -1 --pretty=%B)
 echo $commit_msg
 
-#Questo commit vuole cambiare la label di una certa issue?
-if [[ $commit_msg =~ "£toVerify" ]]; then
+#il commit si riferisce a qualche issue?
+if [[ "$commit_msg" =~ ([#][0-9]+) ]]; then
 	echo $commit_msg
-	#Qual è la issue di cui si vuole cambiare label?
-	if [[ "$commit_msg" =~ ([#][0-9]+) ]]; then
-		result=$(perl -e 'if($ARGV[0] =~ /([#]\d+)/){print $1;}
+	#estrai il numero della issue alla quale si riferisce il commit
+	result=$(perl -e 'if($ARGV[0] =~ /([#]\d+)/){print $1;}
 			else{print 0;};' -- "$commit_msg")
-		#estrai il solo numero(senza '#') della issue da 'result'
-		if [[ $result != 0 ]]; then
-			issue_number=$(perl -e '$ARGV[0] =~ /(\d+)/; print $1;' -- "$result")
-		fi
-		echo $issue_number
-	else
-		echo "*** QUESTO COMMIT NON SI RIFERISCE AD ALCUNA ISSUE ***"
-	fi
+	issue_number=$(perl -e '$ARGV[0] =~ /(\d+)/; print $1;' -- "$result")
+	echo $issue_number
+	#il messaggio di commit contiene la stringa '£toVerify' ?
+	if [[ $commit_msg =~ "£toVerify" ]]; then
+		#HTTP DELETE attraverso la libreria cURL. Elimina label 'Working'
+		curl -u $usr:$psw -X "DELETE" https://api.github.com/repos/$target_repo_owner/$target_repo_name/labels/Working
+		#HTTP POST attraverso la libreria cURL. Aggiunge label 'toVerify'
+		curl -u $usr:$psw --data '["toVerify"]' https://api.github.com/repos/$target_repo_owner/$target_repo_name/issues/$issue_number/labels
+		printf "\nIssue's label changed in 'toVerify'";
 
-	#HTTP DELETE attraverso la libreria cURL. Elimina label 'Working'
-	curl -u $usr:$psw -X "DELETE" https://api.github.com/repos/$target_repo_owner/$target_repo_name/labels/Working
-	#HTTP GET attraverso la libreria cURL. Aggiunge label 'toVerify'
-	curl -u $usr:$psw --data '["toVerify"]' https://api.github.com/repos/$target_repo_owner/$target_repo_name/issues/$issue_number/labels
-	echo "Issue's label changed in 'toVerify'"
+	elif [[ $commit_msg =~ "close" ]]; then
+		#HTTP POST attraverso la libreria cURL. Restituisce la lista dei commenti della issue $issue_number, ordinati per data di creazione crescente
+		json=$(curl https://api.github.com/repos/$target_repo_owner/$target_repo_name/issues/$issue_number/comments);
+		#restituisce id del task relativo alla issue $issue_number
+		#task_id=$(perl 'findTaskId.pl' -- "$json")
+		task_id=$(perl -e '$text = $ARGV[0];if ($text =~ /"(body)":\s"(\d+)"/) { print $2;} else { print 0;};' -- "$json")
+		echo $task_id
+		if [[ $task_id -ne 0 ]]; then
+			#segna il task_id come completo
+			curl -H 'Accept: application/json' -H 'Content-Type: application/json' -u $tw_api_key:xxx -X PUT https://swegroup.teamwork.com/tasks/$task_id/complete.json
+			printf "\nTask with id $task_id completed!";
+		fi
+	fi
 fi
